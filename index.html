@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Lookup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-2xl space-y-8">
+      
+      <!-- Header -->
+      <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900 mb-3">URL Lookup</h1>
+        <p class="text-gray-600 text-lg">Get detailed information about any website or domain</p>
+      </div>
+      
+      <!-- Search Card -->
+      <div class="card rounded-2xl p-8">
+        <div class="space-y-6">
+          <!-- Input Section -->
+          <div class="space-y-4">
+            <label for="urlInput" class="block text-sm font-medium text-gray-700">Enter URL or Domain</label>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input
+                id="urlInput"
+                type="text"
+                placeholder="example.com or https://example.com"
+                class="input-field flex-1 px-4 py-3 rounded-xl text-gray-900 placeholder-gray-500"
+                onkeypress="handleKeyPress(event)"
+              />
+              <button
+                id="searchBtn"
+                onclick="lookupURL()"
+                class="btn-primary text-white px-8 py-3 rounded-xl font-medium whitespace-nowrap"
+              >
+                Analyze
+              </button>
+            </div>
+          </div>
+          
+          <!-- Loading State -->
+          <div id="loading" class="hidden">
+            <div class="flex items-center justify-center py-4">
+              <div class="loading-spinner mr-3"></div>
+              <span class="text-gray-600">Analyzing URL...</span>
+            </div>
+          </div>
+          
+          <!-- API Disclaimer -->
+          <div id="disclaimer" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>
+              <div>
+                <h4 class="text-amber-800 font-medium text-sm mb-1">Data Accuracy Notice</h4>
+                <p class="text-amber-700 text-sm leading-relaxed">The information provided by this tool is sourced from external APIs and may not always be accurate or up-to-date. Please verify critical information through official sources.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error State -->
+          <div id="error" class="hidden">
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span id="errorMessage" class="text-red-800 font-medium"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Results Card -->
+      <div id="result" class="card rounded-2xl p-8 hidden fade-in">
+        <div class="space-y-6">
+          <!-- Header -->
+          <div class="border-b border-gray-200 pb-4">
+            <h2 class="text-2xl font-semibold text-gray-900">Analysis Results</h2>
+            <p class="text-gray-600 mt-1">Detailed information about the URL</p>
+          </div>
+          
+          <!-- Results Grid -->
+          <div class="result-grid text-sm">
+            <!-- URL -->
+            <div class="font-medium text-gray-700">URL</div>
+            <div id="res-url" class="text-gray-900 font-mono bg-gray-50 px-3 py-2 rounded-lg break-all"></div>
+            
+            <!-- Status -->
+            <div class="font-medium text-gray-700">Status</div>
+            <div id="res-valid" class="px-3 py-1 rounded-full text-xs font-medium inline-block"></div>
+            
+            <!-- ISP -->
+            <div class="font-medium text-gray-700">ISP</div>
+            <div id="res-isp" class="text-gray-900"></div>
+            
+            <!-- Location -->
+            <div class="font-medium text-gray-700">City</div>
+            <div id="res-city" class="text-gray-900"></div>
+            
+            <div class="font-medium text-gray-700">Region</div>
+            <div id="res-region" class="text-gray-900"></div>
+            
+            <div class="font-medium text-gray-700">Country</div>
+            <div id="res-country" class="text-gray-900"></div>
+            
+            <div class="font-medium text-gray-700">ZIP Code</div>
+            <div id="res-zip" class="text-gray-900"></div>
+            
+            <!-- Coordinates -->
+            <div class="font-medium text-gray-700">Coordinates</div>
+            <div id="res-coordinates" class="text-gray-900 font-mono"></div>
+            
+            <!-- Timezone -->
+            <div class="font-medium text-gray-700">Timezone</div>
+            <div id="res-timezone" class="text-gray-900"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="text-center text-gray-500 text-sm">
+        <p>Enter any domain or URL to get detailed location and ISP information</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
