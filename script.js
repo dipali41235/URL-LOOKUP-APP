@@ -109,7 +109,8 @@ function showError(message) {
   searchBtn.textContent = "Analyze";
 
   // Show disclaimer again when there's an error
-  document.getElementById("disclaimer").classList.remove("hidden")
+  document.getElementById("disclaimer").classList.remove("hidden");
 }
+
 
 
