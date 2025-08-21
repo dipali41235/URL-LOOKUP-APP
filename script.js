@@ -18,7 +18,7 @@ async function lookupURL() {
   document.getElementById("disclaimer").classList.add("hidden");
   loading.classList.remove("hidden");
   searchBtn.disabled = true;
-  searchBtn.textContent = "Analyzing...";
+  searchBtn.textContent = "Analyzing..."
 
   if (!url) {
     showError("Please enter a valid URL or domain name.");
@@ -111,3 +111,4 @@ function showError(message) {
   // Show disclaimer again when there's an error
   document.getElementById("disclaimer").classList.remove("hidden");
 }
+
