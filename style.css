@@ -60,7 +60,7 @@ body {
 .status-invalid {
   background: #fee2e2;
   color: #dc2626;
-  border: 1px solid #fecaca;
+  border: 2px solid #fecaca;
 }
 
 .loading-spinner {
@@ -95,4 +95,5 @@ body {
     transform: translateY(0);
   }
 }
+
 
